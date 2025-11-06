@@ -1,0 +1,67 @@
+version: '3.9'
+services:
+  mongo:
+    image: mongo:7
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    environment:
+      PORT: 4000
+      MONGODB_URI: mongodb://mongo:27017/job_importer
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      QUEUE_NAME: job-import-queue
+      CRON_SCHEDULE: "0 * * * *"
+      MAX_CONCURRENCY: 5
+      BATCH_SIZE: 50
+      FEED_URLS: "https://jobicy.com/?feed=job_feed,https://jobicy.com/?feed=job_feed&job_categories=data-science,https://www.higheredjobs.com/rss/articleFeed.cfm"
+    depends_on:
+      - mongo
+      - redis
+    ports:
+      - "4000:4000"
+
+  worker:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.worker
+    environment:
+      MONGODB_URI: mongodb://mongo:27017/job_importer
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      QUEUE_NAME: job-import-queue
+      MAX_CONCURRENCY: 5
+    depends_on:
+      - mongo
+      - redis
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    environment:
+      BACKEND_ORIGIN: http://backend:4000
+      NEXT_PUBLIC_API_BASE: http://localhost:4000
+    depends_on:
+      - backend
+    ports:
+      - "3000:3000"
+
+volumes:
+  mongo_data:
+
+
+
