@@ -102,12 +102,12 @@ Compose services: `mongo`, `redis`, `backend` (API), `worker`, `frontend`.
 - **Batch Processing**: Items processed in parallel batches (configurable via `BATCH_SIZE`, default 50) for better throughput.
 - **Real-time Updates**: SSE endpoint (`/api/logs/stream`) broadcasts new import logs as they complete.
 
-### Extensions (Bonus - All Implemented ✅)
-- ✅ Real-time updates via Server-Sent Events (SSE)
-- ✅ Retry logic with exponential backoff
-- ✅ Environment-configurable batch size and max concurrency
-- ✅ Docker Compose for Node, MongoDB, and Redis
-- ✅ Deployment documentation for Render/Vercel with MongoDB Atlas + Redis Cloud
+### Extensions (Bonus - All Implemented )
+-  Real-time updates via Server-Sent Events (SSE)
+-  Retry logic with exponential backoff
+-  Environment-configurable batch size and max concurrency
+-  Docker Compose for Node, MongoDB, and Redis
+-  Deployment documentation for Render/Vercel with MongoDB Atlas + Redis Cloud
 
 ## Production Deployment
 
